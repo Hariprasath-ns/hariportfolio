@@ -2,31 +2,41 @@ import { useState } from 'react'
 
 export default function Contact() {
     const [result, setResult] = useState("");
+    const encode = (data) => {
+        return Object.keys(data)
+            .map((key) => encodeURIComponent(key) + "=" + encodeURIComponent(data[key]))
+            .join("&");
+    };
+
     const onSubmit = async (event) => {
         event.preventDefault();
         setResult("Sending....");
-        const formData = new FormData(event.target);
 
-        // ----- Enter your Web3 Forms Access key below---------
+        const form = event.target;
+        const formData = new FormData(form);
 
-        formData.append("access_key", "--- enter your access key here-------");
+        // Add Netlify form-name so Netlify can capture the submission
+        formData.append("form-name", "contact");
 
-        const res = {
-            success: true,
-            message: "Message sent successfully"
-        };
-        // const res = await fetch("https://api.web3forms.com/submit", {
-        //     method: "POST",
-        //     body: formData
-        // }).then((res) => res.json());
+        const data = {};
+        formData.forEach((value, key) => (data[key] = value));
 
-        if (res.success) {
-            console.log("Success", res);
-            setResult(res.message);
-            event.target.reset();
-        } else {
-            console.log("Error", res);
-            setResult(res.message);
+        try {
+            const res = await fetch("/", {
+                method: "POST",
+                headers: { "Content-Type": "application/x-www-form-urlencoded" },
+                body: encode(data),
+            });
+
+            if (res.ok) {
+                setResult("Message sent successfully");
+                form.reset();
+            } else {
+                setResult("There was an error sending the message. Please try again later.");
+            }
+        } catch (err) {
+            console.error(err);
+            setResult("There was an error sending the message. Please try again later.");
         }
     };
 
@@ -37,9 +47,13 @@ export default function Contact() {
             <h2 className="text-center text-5xl font-Ovo">Get in touch</h2>
             <p className="text-center max-w-2xl mx-auto mt-5 mb-12 font-Ovo">I&apos;d love to hear from you! If you have any questions, comments or feedback, please use the form below.</p>
 
-            <form onSubmit={onSubmit} className="max-w-2xl mx-auto">
-                
+            <form name="contact" method="POST" data-netlify="true" data-netlify-honeypot="bot-field" onSubmit={onSubmit} className="max-w-2xl mx-auto">
+
+                {/* Netlify hidden inputs */}
+                <input type="hidden" name="form-name" value="contact" />
                 <input type="hidden" name="subject" value="Hariprasath Portfolio - New form Submission" />
+                <input type="hidden" name="to" value="hariprasathns804@gmail.com" />
+                <input type="hidden" name="bot-field" />
 
                 <div className="grid grid-cols-auto gap-6 mt-10 mb-8">
                     <input type="text" placeholder="Enter your name" className="flex-1 px-3 py-2 focus:ring-1 outline-none border border-gray-300 dark:border-white/30 rounded-md bg-white dark:bg-darkHover/30" required name="name" />
