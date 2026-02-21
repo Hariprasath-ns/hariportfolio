@@ -15,28 +15,28 @@ export default function Contact() {
         const form = event.target;
         const formData = new FormData(form);
 
-        // Add Netlify form-name so Netlify can capture the submission
-        formData.append("form-name", "contact");
-
-        const data = {};
-        formData.forEach((value, key) => (data[key] = value));
+        // build JSON payload for function
+        const payload = {};
+        formData.forEach((value, key) => (payload[key] = value));
 
         try {
-            const res = await fetch("/", {
-                method: "POST",
-                headers: { "Content-Type": "application/x-www-form-urlencoded" },
-                body: encode(data),
+            const res = await fetch('/.netlify/functions/send-email', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload),
             });
 
             if (res.ok) {
-                setResult("Message sent successfully");
+                setResult('Message sent successfully');
                 form.reset();
             } else {
-                setResult("There was an error sending the message. Please try again later.");
+                const text = await res.text();
+                console.error('Send function error:', text);
+                setResult('There was an error sending the message. Please try again later.');
             }
         } catch (err) {
             console.error(err);
-            setResult("There was an error sending the message. Please try again later.");
+            setResult('There was an error sending the message. Please try again later.');
         }
     };
 

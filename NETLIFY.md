@@ -20,6 +20,23 @@
    - Use a webhook or Zapier to forward submissions to Gmail.
    - Add a Netlify Function that sends email via SendGrid / Nodemailer on form submission.
 
+7. Add a Netlify Function (SendGrid) — setup steps
+   - Add your SendGrid API key in the Netlify dashboard: Site → Settings → Build & deploy → Environment → Environment variables.
+     - Key: `SENDGRID_API_KEY`
+     - Value: (your SendGrid API key)
+   - Optionally set `EMAIL_TO` to `hariprasathns804@gmail.com` (otherwise the function defaults to that address).
+   - Deploy the site. The function is located at `/.netlify/functions/send-email` and the contact form will POST to it.
+
+Notes:
+- If you want to test the function locally, run `netlify dev` (you already installed `netlify-cli`) and set env vars in a `.env` file or in your shell.
+- Example `.env` for local testing (DO NOT commit to git):
+
+```
+SENDGRID_API_KEY=SG.xxxxxxx
+EMAIL_TO=hariprasathns804@gmail.com
+```
+
+
 Notes:
 - The form includes a honeypot (`bot-field`) to reduce spam; keep it.
 - If you need direct transactional email delivery, prefer a provider like SendGrid for reliability.
