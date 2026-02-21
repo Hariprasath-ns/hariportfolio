@@ -1,7 +1,7 @@
 // Netlify Function to send an email via SendGrid
 // Requires environment variable SENDGRID_API_KEY and optional EMAIL_TO
 
-exports.handler = async function (event) {
+export const handler = async (event) => {
   if (event.httpMethod !== 'POST') {
     return { statusCode: 405, body: 'Method Not Allowed' };
   }
