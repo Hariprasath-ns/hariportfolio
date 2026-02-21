@@ -1,40 +1,38 @@
-# Hariprasath - React JS Portfolio
-#### Preview
+# 👋 Hi, I'm [Hariprasath]
 
- - [Demo](https://themewagon.github.io/eliana-react/)
+🎯 [Your Title | e.g., Full Stack Developer | UI/UX Designer | Data Analyst]  
+🌍 Based in [Perundurai]  
+📧 Contact: [hariprasathns.25bsr@kongu.edu]  
 
-#### Download
- - [Download from ThemeWagon](https://themewagon.com/themes/eliana-react/)
 
-## Getting Started
+---
 
-1. Clone Repository
-```
-git clone https://github.com/themewagon/eliana-react.git
-```
-2. Install Dependencies
-```
-npm i
-```
-3. Run the development server:
+## 🚀 About Me
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+I am a passionate developer with a strong interest in building scalable, efficient, and user-friendly solutions. I enjoy turning complex problems into simple, beautiful, and intuitive designs.
 
-## Author 
-```
-Design and code is completely written by PrebuiltUI and development team. 
-```
+ I focus on writing clean code, following best practices, and continuously learning new technologies.
 
-## License
+---
 
- - Design and Code is Copyright &copy; <a href="https://prebuiltui.com/" target="_blank">PrebuiltUI</a>
- - Licensed cover under [MIT]
- - Distributed by <a href="https://themewagon.com" target="_blank">ThemeWagon</a>
+## 🛠️ Skills & Technologies
+
+### 💻 Programming Languages
+- C
+Java
+Python
+
+### 🌐 Web Technologies
+- HTML
+- CSS
+- JavaScript
+- React
+
+
+### ⚙️ Tools & Platforms
+- Git & GitHub
+- Docker
+- VS Code
+- AWS / Azure / GCP
+
+
