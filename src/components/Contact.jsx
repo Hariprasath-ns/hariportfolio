@@ -14,24 +14,17 @@ export default function Contact() {
         setResult('Sending...');
         setIsSuccess(null);
 
+        const formDataObj = new FormData(event.target);
+        formDataObj.append('form-name', 'contact');
+
         try {
-            const res = await fetch('https://formsubmit.co/ajax/hariprasathns804@gmail.com', {
+            const res = await fetch('/', {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Accept': 'application/json',
-                },
-                body: JSON.stringify({
-                    name: formData.name,
-                    email: formData.email,
-                    message: formData.message,
-                    _subject: `Portfolio Message from ${formData.name}`,
-                }),
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: new URLSearchParams(formDataObj).toString(),
             });
 
-            const data = await res.json();
-
-            if (data.success === 'true' || data.success === true) {
+            if (res.ok) {
                 setResult("✅ Message sent! I'll get back to you soon.");
                 setIsSuccess(true);
                 setFormData({ name: '', email: '', message: '' });
@@ -40,7 +33,7 @@ export default function Contact() {
                 setIsSuccess(false);
             }
         } catch (err) {
-            console.error('FormSubmit error:', err);
+            console.error('Netlify Form submission error:', err);
             setResult('❌ Something went wrong. Please try again.');
             setIsSuccess(false);
         }
@@ -53,7 +46,14 @@ export default function Contact() {
             <h2 className="text-center text-5xl font-Ovo">Get in touch</h2>
             <p className="text-center max-w-2xl mx-auto mt-5 mb-12 font-Ovo">I&apos;d love to hear from you! If you have any questions, comments or feedback, please use the form below.</p>
 
-            <form onSubmit={onSubmit} className="max-w-2xl mx-auto">
+            <form
+                onSubmit={onSubmit}
+                className="max-w-2xl mx-auto"
+                name="contact"
+                method="POST"
+                data-netlify="true"
+            >
+                <input type="hidden" name="form-name" value="contact" />
 
                 <div className="grid grid-cols-auto gap-6 mt-10 mb-8">
                     <input
