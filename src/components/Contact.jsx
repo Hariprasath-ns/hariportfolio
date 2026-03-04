@@ -15,26 +15,30 @@ export default function Contact() {
         setIsSuccess(null);
 
         const formDataObj = new FormData(event.target);
-        formDataObj.append('form-name', 'contact');
+        // Add Web3Forms Access Key
+        formDataObj.append("access_key", "15f2ff7c-758c-48ec-8550-42238992d70d");
 
         try {
-            const res = await fetch('/', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                body: new URLSearchParams(formDataObj).toString(),
+            const response = await fetch("https://api.web3forms.com/submit", {
+                method: "POST",
+                body: formDataObj
             });
 
-            if (res.ok) {
+            const data = await response.json();
+
+            if (data.success) {
                 setResult("✅ Message sent! I'll get back to you soon.");
                 setIsSuccess(true);
                 setFormData({ name: '', email: '', message: '' });
+                event.target.reset();
             } else {
-                setResult('❌ Something went wrong. Please try again.');
+                console.log("Error", data);
+                setResult(data.message || '❌ Submission failed. Please try again.');
                 setIsSuccess(false);
             }
         } catch (err) {
-            console.error('Netlify Form submission error:', err);
-            setResult('❌ Something went wrong. Please try again.');
+            console.error('Web3Forms error:', err);
+            setResult('❌ Something went wrong. Please check your internet connection.');
             setIsSuccess(false);
         }
     };
@@ -49,11 +53,7 @@ export default function Contact() {
             <form
                 onSubmit={onSubmit}
                 className="max-w-2xl mx-auto"
-                name="contact"
-                method="POST"
-                data-netlify="true"
             >
-                <input type="hidden" name="form-name" value="contact" />
 
                 <div className="grid grid-cols-auto gap-6 mt-10 mb-8">
                     <input
