@@ -1,42 +1,48 @@
 import { useState } from 'react'
 
 export default function Contact() {
-    const [result, setResult] = useState("");
-    const encode = (data) => {
-        return Object.keys(data)
-            .map((key) => encodeURIComponent(key) + "=" + encodeURIComponent(data[key]))
-            .join("&");
+    const [formData, setFormData] = useState({ name: '', email: '', message: '' });
+    const [result, setResult] = useState('');
+    const [isSuccess, setIsSuccess] = useState(null);
+
+    const handleChange = (e) => {
+        setFormData({ ...formData, [e.target.name]: e.target.value });
     };
 
     const onSubmit = async (event) => {
         event.preventDefault();
-        setResult("Sending....");
-
-        const form = event.target;
-        const formData = new FormData(form);
-
-        // build JSON payload for function
-        const payload = {};
-        formData.forEach((value, key) => (payload[key] = value));
+        setResult('Sending...');
+        setIsSuccess(null);
 
         try {
-            const res = await fetch('/.netlify/functions/send-email', {
+            const res = await fetch('https://formsubmit.co/ajax/hariprasathns804@gmail.com', {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(payload),
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                },
+                body: JSON.stringify({
+                    name: formData.name,
+                    email: formData.email,
+                    message: formData.message,
+                    _subject: `Portfolio Message from ${formData.name}`,
+                }),
             });
 
-            if (res.ok) {
-                setResult('Message sent successfully');
-                form.reset();
+            const data = await res.json();
+
+            if (data.success === 'true' || data.success === true) {
+                setResult("✅ Message sent! I'll get back to you soon.");
+                setIsSuccess(true);
+                setFormData({ name: '', email: '', message: '' });
             } else {
-                const text = await res.text();
-                console.error('Send function error:', text);
-                setResult('There was an error sending the message. Please try again later.');
+                setResult('❌ Something went wrong. Please try again.');
+                setIsSuccess(false);
             }
         } catch (err) {
-            console.error(err);
-            setResult('There was an error sending the message. Please try again later.');
+            console.error('FormSubmit error:', err);
+            setResult('❌ Something went wrong. Please try again.');
+            setIsSuccess(false);
         }
     };
 
@@ -47,25 +53,52 @@ export default function Contact() {
             <h2 className="text-center text-5xl font-Ovo">Get in touch</h2>
             <p className="text-center max-w-2xl mx-auto mt-5 mb-12 font-Ovo">I&apos;d love to hear from you! If you have any questions, comments or feedback, please use the form below.</p>
 
-            <form name="contact" method="POST" data-netlify="true" data-netlify-honeypot="bot-field" onSubmit={onSubmit} className="max-w-2xl mx-auto">
-
-                {/* Netlify hidden inputs */}
-                <input type="hidden" name="form-name" value="contact" />
-                <input type="hidden" name="subject" value="Hariprasath Portfolio - New form Submission" />
-                <input type="hidden" name="to" value="hariprasathns804@gmail.com" />
-                <input type="hidden" name="bot-field" />
+            <form onSubmit={onSubmit} className="max-w-2xl mx-auto">
 
                 <div className="grid grid-cols-auto gap-6 mt-10 mb-8">
-                    <input type="text" placeholder="Enter your name" className="flex-1 px-3 py-2 focus:ring-1 outline-none border border-gray-300 dark:border-white/30 rounded-md bg-white dark:bg-darkHover/30" required name="name" />
-
-                    <input type="email" placeholder="Enter your email" className="flex-1 px-3 py-2 focus:ring-1 outline-none border border-gray-300 dark:border-white/30 rounded-md bg-white dark:bg-darkHover/30" required name="email" />
+                    <input
+                        type="text"
+                        placeholder="Enter your name"
+                        className="flex-1 px-3 py-2 focus:ring-1 outline-none border border-gray-300 dark:border-white/30 rounded-md bg-white dark:bg-darkHover/30"
+                        required
+                        name="name"
+                        value={formData.name}
+                        onChange={handleChange}
+                    />
+                    <input
+                        type="email"
+                        placeholder="Enter your email"
+                        className="flex-1 px-3 py-2 focus:ring-1 outline-none border border-gray-300 dark:border-white/30 rounded-md bg-white dark:bg-darkHover/30"
+                        required
+                        name="email"
+                        value={formData.email}
+                        onChange={handleChange}
+                    />
                 </div>
-                <textarea rows="6" placeholder="Enter your message" className="w-full px-4 py-2 focus:ring-1 outline-none border border-gray-300 dark:border-white/30 rounded-md bg-white mb-6 dark:bg-darkHover/30" required name="message"></textarea>
-                <button type='submit' className="py-2 px-8 w-max flex items-center justify-between gap-2 bg-black/80 text-white rounded-full mx-auto hover:bg-black duration-500 dark:bg-transparent dark:border dark:border-white/30 dark:hover:bg-darkHover">
+
+                <textarea
+                    rows="6"
+                    placeholder="Enter your message"
+                    className="w-full px-4 py-2 focus:ring-1 outline-none border border-gray-300 dark:border-white/30 rounded-md bg-white mb-6 dark:bg-darkHover/30"
+                    required
+                    name="message"
+                    value={formData.message}
+                    onChange={handleChange}
+                ></textarea>
+
+                <button
+                    type="submit"
+                    className="py-2 px-8 w-max flex items-center justify-between gap-2 bg-black/80 text-white rounded-full mx-auto hover:bg-black duration-500 dark:bg-transparent dark:border dark:border-white/30 dark:hover:bg-darkHover"
+                >
                     Submit now
                     <img src="./assets/right-arrow-white.png" alt="" className="w-4" />
                 </button>
-                <p className='mt-4'>{result}</p>
+
+                {result && (
+                    <p className={`mt-4 text-center font-Ovo ${isSuccess === true ? 'text-green-600' : isSuccess === false ? 'text-red-500' : 'text-gray-500'}`}>
+                        {result}
+                    </p>
+                )}
             </form>
         </div>
     )
